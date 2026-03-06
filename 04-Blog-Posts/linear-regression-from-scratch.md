@@ -30,6 +30,8 @@ $$\theta_j := \theta_j - \alpha \frac{\partial}{\partial \theta_j} J(\theta)$$
 
 Applying the chain rule to the cost function results in $X^T(X\theta - y)$. The transpose ($X^T$) is mathematically necessary because it aligns each feature with its corresponding error across all $m$ training examples, giving us a perfectly shaped gradient vector.
 
+![alt text](IMG_0007.JPG)
+
 ---
 
 ## 2. My Implementation
@@ -88,6 +90,8 @@ The model was trained on the California Housing dataset using a custom gradient 
 
 ### Model Performance
 
+![alt text](<Screenshot 2026-03-05 at 7.32.38 PM.png>)
+
 | Metric | Value | Interpretation |
 | --- | --- | --- |
 | **Training $R^2$** | 0.6126 | Model explains 61% of variance in training data
@@ -97,17 +101,21 @@ The model was trained on the California Housing dataset using a custom gradient 
 
 | **sklearn $R^2$** | 0.5758 | Difference of 0.000082 — essentially identical
 
-
-
 The tiny gap between our model and sklearn confirms the gradient descent implementation is mathematically correct.
+
+![alt text](<Screenshot 2026-03-05 at 7.36.00 PM.png>)
 
 ### The Divergence Trap
 
 During experimentation, I discovered that choosing a learning rate ($\alpha$) is a delicate balancing act. When I set $\alpha = 0.99$, the algorithm failed completely. The cost function skyrocketed from 0.33 to 6.49 in just 900 iterations, resulting in a disastrous $R^2$ of -29.24. The steps were so large that the model kept "overshooting" the minimum, climbing the opposite side of the cost valley until it diverged entirely.
 
+![alt text](<Screenshot 2026-03-05 at 7.34.13 PM.png>)
+
 ---
 
 ## 4. Visualizing Multicollinearity: The 3D Cost Surface
+
+![alt text](<Screenshot 2026-03-05 at 7.36.49 PM.png>)
 
 The moderate $R^2$ score (~0.58) is a data and feature problem, not a code problem. Most tutorials stop at the correlation matrix to identify redundant features, but I wanted to see exactly how multicollinearity physically alters the optimization path.
 
@@ -116,16 +124,23 @@ Gradient descent minimises the cost function by iteratively updating theta in th
 
 **Circular contours:** Features are independent, gradient descent flows smoothly to the minimum.
 
+![alt text](<Screenshot 2026-03-05 at 7.38.37 PM.png>)
 
 **Elongated/tilted ellipse:** Features are correlated, gradient descent has to slide along a narrow valley.
+
+![alt text](<Screenshot 2026-03-05 at 7.39.32 PM.png>)
 
 The theta 7 vs theta 8 plot showed a very stretched diagonal ellipse — direct visual confirmation of the Latitude/Longitude multicollinearity. Latitude and Longitude are -0.92 correlated because they jointly encode geographic location.
 
 When two features are highly correlated with each other, the model cannot distinguish their individual contributions and splits/distributes the weight between them arbitrarily. The predictions stay roughly correct, but the individual weights become unstable and unreliable. This exact same distortion was happening with `AveRooms` and `AveBedrms` (0.85 correlated), causing their weight signs to conflict with their actual correlations.
 
+![alt text](<Screenshot 2026-03-05 at 7.40.29 PM.png>)
+
 ### Capped Data Limits
 
 Beyond multicollinearity, the predictions vs actual plot shows a vertical line at Price = 5.0, meaning prices were artificially capped in the dataset. The model learns a false ceiling, corrupting predictions at the high end.
+
+
 
 ---
 
