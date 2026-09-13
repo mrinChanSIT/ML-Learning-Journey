@@ -1,0 +1,20 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Downloaded datasets
+PytorchTutorials/data/
+
+# Model checkpoints
+*.pth
+*.pt
+
+# Installers / binaries
+*.exe
+
+# Generated output
+*.pdf
